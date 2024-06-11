@@ -31,11 +31,7 @@ public class UserInterface {
 			}
 			System.out.println("Enter 0 to create a new fund");
 			
-			String input = in.nextLine();
-			if (input.equals("quit") || input.equals("q")) {
-				System.out.println("Goodbye!");
-				break;
-			}
+			
 
 			// int option = in.nextInt();
 			// in.nextLine();
@@ -44,8 +40,12 @@ public class UserInterface {
 			int option = -1;
 			boolean novalid = true;
 			while (novalid) {
-				
-				
+
+				String input = in.nextLine();
+				if (input.equals("quit") || input.equals("q")) {
+					System.out.println("Goodbye!");
+					break;
+				}
 				try {
 					option = Integer.parseInt(input);
 				}
@@ -58,6 +58,7 @@ public class UserInterface {
 					continue;
 				}
 				novalid = false;
+				input = 
 			}
 
 			if (option == 0) {
