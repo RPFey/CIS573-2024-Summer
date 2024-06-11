@@ -58,7 +58,6 @@ public class UserInterface {
 					continue;
 				}
 				novalid = false;
-				input = 
 			}
 
 			if (option == 0) {
