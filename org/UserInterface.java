@@ -22,9 +22,7 @@ public class UserInterface {
 
                 int count = 1;
                 for (Fund f : org.getFunds()) {
-
                     System.out.println(count + ": " + f.getName());
-
                     count++;
                 }
                 System.out.println("Enter the fund number to see more information.");
@@ -184,7 +182,12 @@ public class UserInterface {
                 for (AggregateDonation ad : sorted) {
                     System.out.println("* " + ad.getContributorName() + ": $" + ad.getTotal());
                 }
-
+            }
+            // make donation
+            System.out.println("Would you like to make a donation? (Y/n)");
+            input = in.nextLine();
+            if (!input.equals("n")) {
+                makeDonation();
             }
 
         } else {
@@ -236,6 +239,56 @@ public class UserInterface {
 
 
     }
+
+    //make donation
+    private void makeDonation() {
+        Scanner in = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Making a donation...");
+            System.out.print("Enter the fund number: ");
+            int fundNumber = 0;
+
+            try {
+                fundNumber = Integer.parseInt(in.nextLine());
+                if (fundNumber < 1 || fundNumber > org.getFunds().size()) {
+                    System.out.println("[Invalid Input] Invalid fund number. Try Again.");
+                    continue;
+                }
+
+                Fund fund = org.getFunds().get(fundNumber - 1);
+
+                while (true) {
+                    System.out.print("Enter the contributor Id: ");
+                    String contributorId = in.nextLine().trim();
+
+                    System.out.print("Enter the donation amount: ");
+                    String amountStr = in.nextLine().trim();
+
+                    try {
+                        List<Donation> donations = dataManager.makeDonation(contributorId, fund.getId(), amountStr);
+                        fund.setDonations(donations);
+                        printIndividualDonation(donations);
+                        return;
+                    } catch (IllegalStateException | IllegalArgumentException e) {
+                        System.out.println(e.getMessage());
+                        System.out.println("Try Again.");
+                    }
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("[Invalid Input] Please enter a valid fund number.");
+                continue;
+            }
+        }
+    }
+
+    private static void printIndividualDonation(List<Donation> donations) {
+        System.out.println("Number of donations: " + donations.size());
+        for (Donation donation : donations) {
+            System.out.println("* " + donation.getContributorName() + ": $" + donation.getAmount() + " on " + donation.getDate());
+        }
+    }
+
 
     private static String getUserInput(String prompt) {
         Scanner loginScanner = new Scanner(System.in);
@@ -294,12 +347,15 @@ public class UserInterface {
                         System.out.println("Registration failed.");
                     }
                 } catch (IllegalStateException e) {
-                    System.out.println("Error in communicating with server.");
                     System.out.println(e.getMessage());
+                    login = null;
+                    password = null;
                     break;
                 } catch(IllegalArgumentException e){
                     // print input error and continue
                     System.out.println(e.getMessage());
+                    login = null;
+                    password = null;
                     continue;
                 }
 

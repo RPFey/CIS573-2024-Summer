@@ -99,7 +99,7 @@ Handle the form submission to update an org
 */
 app.use('/updateOrg', (req, res) => {
 
-	var filter = {"_id" : req.query.id };
+	var filter = {"_id" : req.query._id };
 
 	var update = { "login" : req.query.login, "password" : req.query.password, "name" : req.query.name, "description" : req.query.description };
 

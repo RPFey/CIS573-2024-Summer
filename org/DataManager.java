@@ -240,7 +240,7 @@ public class DataManager {
 				return org;
 			}
 			else {
-				throw new IllegalStateException("[Error in communicating with server] fail to login.");
+				throw new IllegalArgumentException("[Fail to create org] Login already exists.");
 			}
 		}
 		catch (ParseException e) {
@@ -531,6 +531,90 @@ public class DataManager {
 			return false;
 		}
 	}
+
+	public List<Donation> makeDonation(String contributorId, String fundId, String amountStr) {
+		// Validate input parameters
+		if (contributorId == null || contributorId.isBlank() ||
+				fundId == null || fundId.isBlank() ||
+				amountStr == null || amountStr.isBlank()) {
+			throw new IllegalArgumentException("[Invalid Input] contributorId, fundId, or amount cannot be empty.");
+		}
+
+
+		// Parse amount from string
+		long amount = 0;
+		try {
+			amount = Long.parseLong(amountStr);
+			if (amount < 0) {
+				throw new IllegalArgumentException("[Invalid amount] amount cannot be negative.");
+			}
+		} catch (NumberFormatException e) {
+			throw new IllegalArgumentException("[Invalid amount] amount cannot be parsed: " + e.getMessage());
+		}
+
+		// Ensure contributor exists and retrieve their name
+		String contributorName = getContributorName(contributorId);
+
+		// Prepare donation data for API request
+		Map<String, Object> map = new HashMap<>();
+		map.put("contributor", contributorId);
+		map.put("fund", fundId);
+		map.put("amount", amountStr);
+
+		// Make donation request to the server
+		String response = client.makeRequest("/makeDonation", map);
+
+		// Parse response from server
+		JSONParser parser = new JSONParser();
+		JSONObject json;
+		try {
+			json = (JSONObject) parser.parse(response);
+		} catch (ParseException | ClassCastException e) {
+			throw new IllegalStateException("Error when parsing response from makeDonation: " + response);
+		}
+
+		// Check donation status
+		String status = (String) json.get("status");
+		if (status == null || !status.equals("success")) {
+			throw new IllegalStateException("Error when making donation: " + json);
+		}
+
+		// Retrieve updated fund information after successful donation
+		map.clear();
+		map.put("id", fundId);
+		response = client.makeRequest("/findFundById", map);
+
+		// Parse response to get fund details
+		try {
+			json = (JSONObject) parser.parse(response);
+		} catch (ParseException | ClassCastException e) {
+			throw new IllegalStateException("Error when parsing response from findFundById: " + response);
+		}
+
+		// Check status of findFundById operation
+		status = (String) json.get("status");
+		if (!"success".equals(status)) {
+			throw new IllegalStateException("Error when parsing fund donations: " + json);
+		}
+
+		// Extract donations from fund data
+		JSONObject fund = (JSONObject) json.get("data");
+		JSONArray donations = (JSONArray) fund.get("donations");
+		List<Donation> donationList = new LinkedList<>();
+
+		// Create Donation objects from JSON array
+		for (Object o : donations) {
+			JSONObject donation = (JSONObject) o;
+			String contributor = (String) donation.get("contributor");
+			contributorName = getContributorName(contributor);
+			amount = (Long) donation.get("amount");
+			String date = (String) donation.get("date");
+			donationList.add(new Donation(fundId, contributorName, amount, date));
+		}
+
+		return donationList;
+	}
+
 
 
 }
