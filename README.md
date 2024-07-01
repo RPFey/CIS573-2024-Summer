@@ -87,3 +87,11 @@ When launching javascript, please use the following command.
  node --security-revert=CVE-2023-46809 .\api.js
  node .\admin.js
 ```
+
+# phase 3
+
+## Edit account information
+Add a new function in the UserInterface class to modify the organization information. 
+Prompt the user to enter their choice and check whether the input is valid. The input is cached in local temporary memory.
+Reuse the `dataManager.updatePassword()` function to modify the organization info. Input the new name and description, but keep other information as before.
+If the function return true, then modify the organization info in the object. Otherwise report error and abort edit.
