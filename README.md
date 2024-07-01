@@ -104,5 +104,7 @@ Prompt the user to enter their choice and check whether the input is valid. The 
 Reuse the `dataManager.updatePassword()` function to modify the organization info. Input the new name and description, but keep other information as before.
 If the function return true, then modify the organization info in the object. Otherwise report error and abort edit.
 
-## 3.4 
+## 3.4 Make Donation (Ruxi (Sophia) Xu)
+
+The user can choose to make donation in the `org` app after viewing the fund in the organization. The `org` app will ask the user to input the fund id, contributor id and money. A new function `/makeDonation` is created in the `api.js` file to process request from `org` app. 
 

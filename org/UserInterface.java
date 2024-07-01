@@ -262,20 +262,36 @@ public class UserInterface {
                 totalDonations += donation.getAmount();
             }
 
-            System.out.println("Show Aggregate Donations? (Y/n)");
-            String input = in.nextLine();
-            if (!input.equals("n")) {
-                System.out.println("Aggregate Donations:");
-                List<AggregateDonation> sorted = fund.getSortedAggregateDonations();
-                for (AggregateDonation ad : sorted) {
-                    System.out.println("* " + ad.getContributorName() + ": $" + ad.getTotal());
+            while(true){
+                System.out.println("Show Aggregate Donations? (Y/n)");
+                String input = in.nextLine();
+                if (input.equals("Y")) {
+                    System.out.println("Aggregate Donations:");
+                    List<AggregateDonation> sorted = fund.getSortedAggregateDonations();
+                    for (AggregateDonation ad : sorted) {
+                        System.out.println("* " + ad.getContributorName() + ": $" + ad.getTotal());
+                    }
+                    break;
+                } else if (input.equals("n")) {
+                    break;
+                } else {
+                    System.out.println("Invalid input. Please re-enter.");
                 }
             }
+
+
             // make donation
-            System.out.println("Would you like to make a donation? (Y/n)");
-            input = in.nextLine();
-            if (!input.equals("n")) {
-                makeDonation();
+            while(true){
+                System.out.println("Would you like to make a donation? (Y/n)");
+                String input = in.nextLine();
+                if (input.equals("Y")) {
+                    makeDonation();
+                    break;
+                } else if (input.equals("n")) {
+                    break;
+                } else {
+                    System.out.println("Invalid input. Please re-enter.");
+                }
             }
 
         } else {
