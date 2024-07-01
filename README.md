@@ -90,8 +90,19 @@ When launching javascript, please use the following command.
 
 # phase 3
 
-## Edit account information
+## 3.1 New User Registration (Boshu Lei)
+
+Add a new function `/createOrg` in the `api.js` to crreate new organization after receiving requests from `org` app. If the login has already exists, it will send failure signal back to `org` app. In the `org` app, it will first prompt the user to choose from Login or Register. If the user chooses Register, then they will type the login, password, description and name of the new organization. Any illegal inputs will be detected and the user should re-type them again. 
+
+## 3.2 Change Password (Boshu Lei)
+
+After sucessfully login in, the user can type `m` to change the password. When changing the password, they are asked to input the current password and type the new password twice for confimation. A new function `/updateOrg` is added in the `api.js` to process the updating request from the client. 
+
+## 3.3 Edit account information (Yunzhou Song)
 Add a new function in the UserInterface class to modify the organization information. 
 Prompt the user to enter their choice and check whether the input is valid. The input is cached in local temporary memory.
 Reuse the `dataManager.updatePassword()` function to modify the organization info. Input the new name and description, but keep other information as before.
 If the function return true, then modify the organization info in the object. Otherwise report error and abort edit.
+
+## 3.4 
+
